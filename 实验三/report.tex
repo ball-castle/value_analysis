@@ -1,0 +1,299 @@
+\documentclass[12pt,a4paper]{ctexart}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\geometry{left=2.4cm,right=2.4cm,top=2.5cm,bottom=2.5cm}
+\setlength{\parindent}{2em}
+\renewcommand{\arraystretch}{1.15}
+
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+
+\begin{document}
+\thispagestyle{empty}
+
+\begin{center}
+    {\zihao{2}\bfseries 实验报告}
+
+    \vspace{0.7em}
+    {\zihao{4}数值分析实验三}
+
+    \vspace{1em}
+    姓名：蔡斌 \qquad 学号：1024001338 \qquad 班级：\mbox{数学jd2401}
+\end{center}
+
+\section{实验目的}
+
+\begin{enumerate}
+    \item 掌握复化梯形公式与复化 Simpson 公式计算定积分的基本方法；
+    \item 掌握 Gauss--Legendre 求积公式在区间变换后的应用方法；
+    \item 通过误差比较分析不同数值积分方法的精度与收敛特性。
+\end{enumerate}
+
+\section{实验题目}
+
+计算定积分
+\[
+I=\int_0^1 \frac{4}{1+x^4}\,dx.
+\]
+
+分别使用下列三种方法计算该积分的近似值，并分析误差：
+\begin{enumerate}
+    \item 复化梯形公式（取步长 $h=1/n$，其中 $n=2,4,8,16,32,64$）；
+    \item 复化 Simpson 公式（取 $n=2,4,8,16,32,64$，其中 $n$ 为偶数）；
+    \item Gauss--Legendre 求积公式（取节点数 $m=2$ 和 $m=3$，分别计算积分近似值，并与精确值比较）。
+\end{enumerate}
+
+\section{实验原理}
+
+\subsection{复化梯形公式}
+
+将区间 $[a,b]$ 等分为 $n$ 个小区间，步长为 $h=(b-a)/n$，则复化梯形公式为
+\[
+T_n=h\left[\frac{1}{2}f(x_0)+\sum_{k=1}^{n-1}f(x_k)+\frac{1}{2}f(x_n)\right].
+\]
+其误差满足
+\[
+R_T=-\frac{b-a}{12}h^2 f''(\xi),\qquad \xi\in(a,b).
+\]
+因此复化梯形公式具有二阶收敛精度。
+
+\subsection{复化 Simpson 公式}
+
+当 $n$ 为偶数时，复化 Simpson 公式为
+\[
+S_n=\frac{h}{3}\left[f(x_0)+f(x_n)+4\sum_{k=1}^{n/2}f(x_{2k-1})+2\sum_{k=1}^{n/2-1}f(x_{2k})\right].
+\]
+其误差满足
+\[
+R_S=-\frac{b-a}{180}h^4 f^{(4)}(\xi),\qquad \xi\in(a,b).
+\]
+因此复化 Simpson 公式具有四阶收敛精度。
+
+\subsection{Gauss--Legendre 求积公式}
+
+Gauss--Legendre 求积公式先在区间 $[-1,1]$ 上选取节点与权重，再通过线性变换
+\[
+x=\frac{1+t}{2},\qquad t\in[-1,1]
+\]
+将积分区间 $[0,1]$ 转换到标准区间。于是
+\[
+I=\int_0^1 \frac{4}{1+x^4}\,dx
+=\frac{1}{2}\int_{-1}^1 \frac{4}{1+\left(\frac{1+t}{2}\right)^4}\,dt.
+\]
+若取节点 $t_i$ 和权重 $A_i$，则近似公式为
+\[
+I\approx \frac{1}{2}\sum_{i=1}^m A_i\,f\!\left(\frac{1+t_i}{2}\right).
+\]
+其中 $m$ 点 Gauss--Legendre 公式对不超过 $2m-1$ 次多项式积分是精确的，因此在较少节点下也常具有较高精度。
+
+\section{实验步骤}
+
+\begin{enumerate}
+    \item 写出被积函数 $f(x)=\dfrac{4}{1+x^4}$，并通过解析计算得到积分精确值；
+    \item 对 $n=2,4,8,16,32,64$，分别利用复化梯形公式计算积分近似值与绝对误差；
+    \item 对相同的 $n$，利用复化 Simpson 公式计算积分近似值与绝对误差；
+    \item 将积分区间由 $[0,1]$ 变换到 $[-1,1]$，分别使用 $2$ 点和 $3$ 点 Gauss--Legendre 公式求积分近似值；
+    \item 比较三种方法的误差大小，并分析误差随步长或节点数变化的规律。
+\end{enumerate}
+
+\section{实验结果}
+
+\subsection{积分精确值}
+
+先对被积函数作部分分式分解：
+\[
+\frac{4}{1+x^4}
+=\frac{\sqrt{2}x+2}{x^2+\sqrt{2}x+1}
++\frac{-\sqrt{2}x+2}{x^2-\sqrt{2}x+1}.
+\]
+
+积分后可得一个原函数
+\[
+\begin{aligned}
+F(x)=\sqrt{2}\Bigg(
+&-\frac{1}{2}\ln\!\left(x^2-\sqrt{2}x+1\right)
++\frac{1}{2}\ln\!\left(x^2+\sqrt{2}x+1\right)\\
+&+\arctan(\sqrt{2}x-1)+\arctan(\sqrt{2}x+1)
+\Bigg).
+\end{aligned}
+\]
+
+因此
+\[
+\begin{aligned}
+I&=F(1)-F(0)\\
+&=\frac{\sqrt{2}}{2}\left(\pi+\ln(3+2\sqrt{2})\right)\\
+&\approx 3.467891949359644.
+\end{aligned}
+\]
+
+\subsection{复化梯形公式结果}
+
+对
+\[
+f(x)=\frac{4}{1+x^4}
+\]
+应用复化梯形公式，得到表 \ref{tab:trap}。
+
+\begin{table}[H]
+    \centering
+    \caption{复化梯形公式计算结果}
+    \label{tab:trap}
+    \begin{tabular}{cccc}
+        \toprule
+        $n$ & $T_n$ & 绝对误差 $|T_n-I|$ & 相邻误差比 \\
+        \midrule
+        2  & 3.382352941176471 & $8.553900818\times 10^{-2}$ & -- \\
+        4  & 3.446929336918524 & $2.096261244\times 10^{-2}$ & 4.080551 \\
+        8  & 3.462675481200849 & $5.216468159\times 10^{-3}$ & 4.018545 \\
+        16 & 3.466589357411852 & $1.302591948\times 10^{-3}$ & 4.004683 \\
+        32 & 3.467566396737213 & $3.255526224\times 10^{-4}$ & 4.001172 \\
+        64 & 3.467810567164490 & $8.138219515\times 10^{-5}$ & 4.000293 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+由表中结果可见，当 $n$ 加倍、步长减半时，误差约缩小为原来的 $\frac{1}{4}$，这与复化梯形公式的二阶精度一致。
+
+\subsection{复化 Simpson 公式结果}
+
+应用复化 Simpson 公式，得到表 \ref{tab:simpson}。
+
+\begin{table}[H]
+    \centering
+    \caption{复化 Simpson 公式计算结果}
+    \label{tab:simpson}
+    \begin{tabular}{cccc}
+        \toprule
+        $n$ & $S_n$ & 绝对误差 $|S_n-I|$ & 相邻误差比 \\
+        \midrule
+        2  & 3.509803921568627 & $4.191197221\times 10^{-2}$ & -- \\
+        4  & 3.468454802165875 & $5.628528062\times 10^{-4}$ & 74.463469 \\
+        8  & 3.467924195961624 & $3.224660198\times 10^{-5}$ & 17.454639 \\
+        16 & 3.467893982815520 & $2.033455876\times 10^{-6}$ & 15.858029 \\
+        32 & 3.467892076512332 & $1.271526884\times 10^{-7}$ & 15.992237 \\
+        64 & 3.467891957306915 & $7.947270841\times 10^{-9}$ & 15.999541 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+当 $n$ 较大时，误差比逐渐接近 $16$，说明步长减半后误差约缩小为原来的 $\frac{1}{16}$，符合复化 Simpson 公式四阶精度的理论结论。
+
+\subsection{Gauss--Legendre 求积结果}
+
+对区间 $[-1,1]$ 上的 Gauss--Legendre 公式进行区间变换后，计算结果如表 \ref{tab:gauss} 所示。
+
+\begin{table}[H]
+    \centering
+    \caption{Gauss--Legendre 求积结果}
+    \label{tab:gauss}
+    \begin{tabular}{ccc}
+        \toprule
+        节点数 $m$ & 近似值 & 绝对误差 \\
+        \midrule
+        2 & 3.438089950027763 & $2.980199933\times 10^{-2}$ \\
+        3 & 3.470073863753266 & $2.181914394\times 10^{-3}$ \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+可见在只取 $3$ 个节点时，Gauss--Legendre 公式已经达到较高精度，但与取较大 $n$ 的复化 Simpson 公式相比，误差仍略大。
+
+\section{结果分析}
+
+\subsection{误差收敛性分析}
+
+由表 \ref{tab:trap} 可以看出，复化梯形公式的误差随着 $h$ 的减小按 $O(h^2)$ 速度衰减；由表 \ref{tab:simpson} 可以看出，复化 Simpson 公式的误差按 $O(h^4)$ 速度衰减，因此在相同步长下 Simpson 公式明显更精确。
+
+例如当 $n=64$ 时，复化梯形公式的绝对误差约为
+\[
+8.1382\times 10^{-5},
+\]
+而复化 Simpson 公式的绝对误差约为
+\[
+7.9473\times 10^{-9},
+\]
+后者比前者小了约四个数量级。
+
+\subsection{理论误差界分析}
+
+对
+\[
+f(x)=\frac{4}{1+x^4}
+\]
+有
+\[
+f''(x)=\frac{16x^2(5x^4-3)}{(1+x^4)^3},
+\]
+\[
+f^{(4)}(x)=\frac{96(35x^{12}-155x^8+65x^4-1)}{(1+x^4)^5}.
+\]
+
+在区间 $[0,1]$ 上，可取
+\[
+\max_{[0,1]}|f''(x)|\approx 9.510565,
+\qquad
+\max_{[0,1]}|f^{(4)}(x)|=257.25.
+\]
+
+于是复化梯形公式误差上界满足
+\[
+|R_T|\le \frac{1}{12}h^2\max_{[0,1]}|f''(x)|
+\approx 0.792547\,h^2,
+\]
+复化 Simpson 公式误差上界满足
+\[
+|R_S|\le \frac{1}{180}h^4\max_{[0,1]}|f^{(4)}(x)|
+=1.429167\,h^4.
+\]
+
+这从理论上解释了 Simpson 公式精度明显优于梯形公式的原因。
+
+\subsection{三种方法的比较}
+
+综合比较可得：
+\begin{enumerate}
+    \item 复化梯形公式实现最简单，但收敛速度较慢；
+    \item 复化 Simpson 公式在本题中精度最高，且误差衰减规律与理论完全一致；
+    \item Gauss--Legendre 公式在较少节点下即可得到较好的结果，体现了高斯型求积公式在低节点数情形下的优势。
+\end{enumerate}
+
+若只允许使用很少的函数值，Gauss--Legendre 公式更有吸引力；若允许适当增加分点数，则复化 Simpson 公式在本题中表现最优。
+
+\section{实验结论}
+
+\begin{enumerate}
+    \item 定积分
+    \[
+    I=\int_0^1 \frac{4}{1+x^4}\,dx
+    \]
+    的精确值为
+    \[
+    \frac{\sqrt{2}}{2}\left(\pi+\ln(3+2\sqrt{2})\right)
+    \approx 3.467891949359644.
+    \]
+    \item 复化梯形公式具有二阶收敛精度；当 $n=64$ 时，其绝对误差约为
+    \[
+    8.1382\times 10^{-5}.
+    \]
+    \item 复化 Simpson 公式具有四阶收敛精度；当 $n=64$ 时，其绝对误差约为
+    \[
+    7.9473\times 10^{-9},
+    \]
+    精度明显优于复化梯形公式。
+    \item $2$ 点和 $3$ 点 Gauss--Legendre 公式分别得到误差约为
+    \[
+    2.9802\times 10^{-2}
+    \quad \text{和} \quad
+    2.1819\times 10^{-3},
+    \]
+    表明高斯型求积公式在节点数较少时也能取得较好的近似效果。
+    \item 对本题而言，若追求高精度，则复化 Simpson 公式最优；若函数取值次数受限，则 Gauss--Legendre 公式具有较高效率。
+\end{enumerate}
+
+\end{document}
